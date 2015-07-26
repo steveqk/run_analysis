@@ -1,4 +1,4 @@
-run_anlaysis <- 
+run_analysis <- 
 {
    #DOWNLOADS ZIP FILE FOR ASSIGNMENT
    if(!file.exists("project_data.zip"))
@@ -53,10 +53,21 @@ run_anlaysis <-
    #COMBINE DATA INTO ONE DATASET
    test <- cbind(X_test, y_test, subject_test)
    train <- cbind(X_train, y_train, subject_train)
-   combined_data <- rbind(train, test)
-   combined_data_df <- as.data.frame(combined_data)
-   combined_data_melted <- melt(combined_data, id = c("subject", "activity"))
-   combined_data_melted_filtered <- filter(combined_data_melted, grepl('mean()|std()', variable))
-   run_analysis_summary <- aggregate(value ~ subject + activity + variable, combined_data_melted_filtered, mean)
+   combined_data <- rbind(train, test)   
+   
+   #FORCES COLUMN NAMES TO CONTAIN ONLY VALID CHARACTERS SO AS TO NOT CAUSE DUPLICATE COLUMN ERROR IN FUTURE CODE
+   valid_names <- make.names(names=names(combined_data), unique=TRUE, allow_ = TRUE)
+   names(combined_data) <- valid_names      
+   
+   #SUBSETS ONLY MEAN AND STD MEASUREMENTS
+   subset_combined_mean_std <- select(combined_data, one_of("subject", "activity"), contains(".mean"), contains(".std"))
+
+   #GATHERS SUBSET OF MEAN AND STD VALUES AND SEPARATES MEASURE INTO FEATURE, MEAN_ST, AND DIRECTION VARIABLES
+   gathered1 <- gather(subset_combined_mean_std, measurement, value, tBodyAcc.mean...X:fBodyBodyGyroJerkMag.std.., -subject, -activity)
+   separated1 <- separate(gathered1,variable, into = c("feature", "measure_function", "direction"), extra = "merge", na.rm = TRUE)
+
+   #CREATES NEW TIDY DATASET OF AVERAGE PER subject & activity & feature & measure_function & direction
+   run_analysis_summary <- aggregate(value ~ subject + activity + feature + measure_function + direction, separated1, mean)
+   colnames(run_analysis_summary)[6] <- "observation_mean"
 }
 
