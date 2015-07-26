@@ -1,0 +1,27 @@
+run_analysis.R Codebook
+July 26th, 2015
+Codebook prepared by steveqk
+
+Variable: subject
+Description: subject identifier
+Datatype: numeric
+
+Variable: activity
+Description: Type of activity generating the observation (WALKING, WALKING_UPSTAIRS, WALKING_DOWNSTAIRS, SITTING, STANDING, LAYING)
+Datatype: text
+
+Variable: feature
+Description: features of units used by subjects during activities
+Datatype: text
+
+Variable: measure_function
+Description: function (std or mean) of observation used to calculate reported mean
+Datatype: text
+
+Variable: direction
+Description: axial signals in X, Y, Z directions
+Datatype: text
+
+Variable: observation_mean
+Description: mean of the std or mean observations by subject by activity by feature by measure_function by direction
+Datatype: numeric
